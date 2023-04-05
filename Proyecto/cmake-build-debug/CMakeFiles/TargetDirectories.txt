@@ -1,3 +1,0 @@
-/home/axel/Escritorio/reepos/Proyecto/cmake-build-debug/CMakeFiles/Proyecto.dir
-/home/axel/Escritorio/reepos/Proyecto/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/axel/Escritorio/reepos/Proyecto/cmake-build-debug/CMakeFiles/rebuild_cache.dir
