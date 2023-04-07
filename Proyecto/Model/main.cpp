@@ -6,9 +6,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
-/**
- * @brief Clase que representa una bala en el juego.
- */
+
 class Bullet {
 public:
     /**
@@ -124,7 +122,15 @@ private:
     std::vector<Bullet> bullets;/**< Vector de proyectiles disparados por la nave. */
     sf::RenderWindow* windowRef;/**< Referencia a la ventana de renderizado de SFML. */
 };
+class Enemy {
+public:
+    sf::Sprite sprite;
 
+    Enemy(sf::Texture& texture, sf::Vector2f position) {
+        sprite.setTexture(texture);
+        sprite.setPosition(position);
+    }
+};
 /**
  * @brief Clase que representa el juego principal
  *
@@ -152,6 +158,7 @@ public:
         hardButton = sf::RectangleShape(sf::Vector2f(200, 50));
         hardButton.setPosition(300, 400);
         hardButton.setFillColor(sf::Color::Red);
+
     }
 
     /**
@@ -195,14 +202,26 @@ private:
             }
         }
     }
-
+public:
     void startGame(std::string gameMode) {
-        sf::RenderWindow gameWindow(sf::VideoMode(800, 600), gameMode);
 
+        sf::RenderWindow gameWindow(sf::VideoMode(800, 600), gameMode);
         Spaceship spaceship(gameWindow);
 
+
+        sf::Texture enemyTexture;
+        enemyTexture.loadFromFile("/home/axel/Escritorio/reepos/BattleSpace./BattleSpace/Multimedia/navee.png");
+        std::vector<Enemy> enemies;
+        enemies.emplace_back(enemyTexture, sf::Vector2f(700.f, gameWindow.getSize().y / 2.f)); // Create enemy
+
+        sf::CircleShape circle(50.f);
+        circle.setPosition(200.f, 200.f);
+        circle.setFillColor(sf::Color::Red);
+
+        //bucle principal para la pantalla de juego
         while (gameWindow.isOpen()) {
             sf::Event event;
+
             while (gameWindow.pollEvent(event)) {
                 if (event.type == sf::Event::Closed) {
                     gameWindow.close();
@@ -218,8 +237,8 @@ private:
                         spaceship.shoot();
                     }
                 }
-            }
 
+            }
             spaceship.update();
             gameWindow.clear();
             gameWindow.draw(spaceship.sprite);
