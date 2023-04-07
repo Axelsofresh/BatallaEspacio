@@ -216,7 +216,7 @@ public:
 
         sf::CircleShape circle(50.f);
         circle.setPosition(200.f, 200.f);
-        circle.setFillColor(sf::Color::Red);
+        circle.setFillColor(sf::Color::Green);
 
         //bucle principal para la pantalla de juego
         while (gameWindow.isOpen()) {
