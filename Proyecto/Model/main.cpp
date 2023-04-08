@@ -50,6 +50,97 @@ private:
  * La nave se puede mover hacia arriba y hacia abajo, y también puede disparar proyectiles.
  * La nave mantiene una lista de los proyectiles que ha disparado y actualiza su posición.
  */
+
+
+class Enemigo {
+public:
+
+    /**
+     * @brief Constructor de la clase Enemigo.
+     *
+     * Carga la textura de la nave y la configura en su posición inicial.
+     *
+     * @param window Referencia a la ventana de renderizado de SFML.
+     */
+    Enemigo(sf::RenderWindow& window) {
+        if (!texture.loadFromFile("/home/axel/Escritorio/reepos/BatallaEspacio/Proyecto/Multimedia/enemigo.png")) {
+            return;
+        }
+        if (!texture1.loadFromFile("/home/axel/Escritorio/reepos/BatallaEspacio/Proyecto/Multimedia/enemigo1.png")){
+            return;
+        }
+        if (!texture2.loadFromFile("/home/axel/Escritorio/reepos/BatallaEspacio/Proyecto/Multimedia/enemigo2.png")){
+            return;
+        }
+        if (!texture3.loadFromFile("/home/axel/Escritorio/reepos/BatallaEspacio/Proyecto/Multimedia/enemigo3.png")){
+            return;
+        }
+        if (!texture4.loadFromFile("/home/axel/Escritorio/reepos/BatallaEspacio/Proyecto/Multimedia/enemigo4.png")){
+            return;
+        }
+        if (!texture5.loadFromFile("/home/axel/Escritorio/reepos/BatallaEspacio/Proyecto/Multimedia/enemigo5.png")){
+            return;
+        }
+    }
+
+    void dibujarmodofacil(sf::RenderWindow& window){
+        sprite.setTexture(texture);
+        sprite.setPosition(rand() % 600 + 200, rand() % 600);
+        sprite1.setTexture(texture1);
+        sprite1.setPosition(rand() % 500 + 300, rand() % 600);
+        sprite2.setTexture(texture2);
+        sprite2.setPosition(rand() % 400+400, rand() % 600);
+        windowRef = &window;
+
+    };
+
+    void dibujarmodomedio(sf::RenderWindow& window){
+        sprite.setTexture(texture);
+        sprite.setPosition(rand() % 900, rand() % 700);
+        windowRef = &window;
+
+    };
+
+    void dibujarmododificil(sf::RenderWindow& window){
+        sprite.setTexture(texture);
+        sprite.setPosition(rand() % 900, rand() % 700);
+        windowRef = &window;
+
+    };
+    void mover() {
+        float velocidad = 0.08f; // velocidad del movimiento
+        sprite.move(-velocidad, 0); // mover sprite en el eje X hacia la izquierda
+        sprite1.move(-velocidad, 0); // mover sprite en el eje X hacia la izquierda
+        sprite2.move(-velocidad, 0); // mover sprite en el eje X hacia la izquierda
+        sprite3.move(-velocidad, 0); // mover sprite en el eje X hacia la izquierda
+        sprite4.move(-velocidad, 0); // mover sprite en el eje X hacia la izquierda
+        sprite5.move(-velocidad, 0); // mover sprite en el eje X hacia la izquierda
+
+    }
+
+    void cerraventana(sf::RenderWindow& window){
+        window.close();
+    }
+
+    sf::Sprite sprite;/**< Sprite de la nave. */
+    sf::Sprite sprite1;/**< Sprite de la nave. */
+    sf::Sprite sprite2;/**< Sprite de la nave. */
+    sf::Sprite sprite3;/**< Sprite de la nave. */
+    sf::Sprite sprite4;/**< Sprite de la nave. */
+    sf::Sprite sprite5;/**< Sprite de la nave. */
+
+
+private:
+    sf::Texture texture;/**< Textura de la nave. */
+    sf::Texture texture1;
+    sf::Texture texture2;
+    sf::Texture texture3;
+    sf::Texture texture4;
+    sf::Texture texture5;
+    sf::RenderWindow* windowRef;/**< Referencia a la ventana de renderizado de SFML. */
+};
+
+
 class Spaceship {
 public:
 
@@ -122,15 +213,9 @@ private:
     std::vector<Bullet> bullets;/**< Vector de proyectiles disparados por la nave. */
     sf::RenderWindow* windowRef;/**< Referencia a la ventana de renderizado de SFML. */
 };
-class Enemy {
-public:
-    sf::Sprite sprite;
 
-    Enemy(sf::Texture& texture, sf::Vector2f position) {
-        sprite.setTexture(texture);
-        sprite.setPosition(position);
-    }
-};
+
+
 /**
  * @brief Clase que representa el juego principal
  *
@@ -158,7 +243,6 @@ public:
         hardButton = sf::RectangleShape(sf::Vector2f(200, 50));
         hardButton.setPosition(300, 400);
         hardButton.setFillColor(sf::Color::Red);
-
     }
 
     /**
@@ -206,22 +290,16 @@ public:
     void startGame(std::string gameMode) {
 
         sf::RenderWindow gameWindow(sf::VideoMode(800, 600), gameMode);
+        sf::RenderWindow* windowRef;/**< Referencia a la ventana de renderizado de SFML. */
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         Spaceship spaceship(gameWindow);
-
-
-        sf::Texture enemyTexture;
-        enemyTexture.loadFromFile("/home/axel/Escritorio/reepos/BattleSpace./BattleSpace/Multimedia/navee.png");
-        std::vector<Enemy> enemies;
-        enemies.emplace_back(enemyTexture, sf::Vector2f(700.f, gameWindow.getSize().y / 2.f)); // Create enemy
-
-        sf::CircleShape circle(50.f);
-        circle.setPosition(200.f, 200.f);
-        circle.setFillColor(sf::Color::Green);
+        Enemigo enemigo(gameWindow);
+        sf::Clock enemyTimer;
 
         //bucle principal para la pantalla de juego
         while (gameWindow.isOpen()) {
             sf::Event event;
-
+            enemigo.mover();
             while (gameWindow.pollEvent(event)) {
                 if (event.type == sf::Event::Closed) {
                     gameWindow.close();
@@ -239,11 +317,38 @@ public:
                 }
 
             }
+
+            if(gameMode=="Modo Fácil") {
+                if (enemyTimer.getElapsedTime().asSeconds() >= 10.f) {
+                    enemigo.dibujarmodofacil(gameWindow);
+                    enemyTimer.restart();
+                }
+            }
+
+            if (enemigo.sprite.getGlobalBounds().intersects(spaceship.sprite.getGlobalBounds())) {
+                enemigo.cerraventana(gameWindow);
+                printf("pija");
+            }
+            if (enemigo.sprite2.getGlobalBounds().intersects(spaceship.sprite.getGlobalBounds())) {
+                enemigo.cerraventana(gameWindow);
+
+
+            }
+            if (enemigo.sprite3.getGlobalBounds().intersects(spaceship.sprite.getGlobalBounds())) {
+                enemigo.cerraventana(gameWindow);
+
+
+            }
+
             spaceship.update();
             gameWindow.clear();
             gameWindow.draw(spaceship.sprite);
+            gameWindow.draw(enemigo.sprite);
+            gameWindow.draw(enemigo.sprite1);
+            gameWindow.draw(enemigo.sprite2);
             spaceship.drawBullets();
             gameWindow.display();
+
         }
     }
     /**
